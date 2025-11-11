@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desktop Pet Companion</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: transparent;
+      -webkit-app-region: no-drag;
+      cursor: default;
+    }
+
+    #pet-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* Settings panel */
+    #settings-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(30, 30, 30, 0.95);
+      color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 1000;
+      min-width: 400px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #settings-panel.visible {
+      display: block;
+    }
+
+    #settings-panel h2 {
+      margin-bottom: 20px;
+      color: #FF6B9D;
+    }
+
+    #settings-panel .setting-group {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #settings-panel .setting-group:last-child {
+      border-bottom: none;
+    }
+
+    #settings-panel h3 {
+      margin-bottom: 10px;
+      color: #FFB6D9;
+      font-size: 16px;
+    }
+
+    #settings-panel label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    #settings-panel input[type="checkbox"] {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    #settings-panel input[type="number"],
+    #settings-panel input[type="range"] {
+      margin-left: 10px;
+      padding: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 5px;
+    }
+
+    #settings-panel button {
+      background: #FF6B9D;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 10px;
+    }
+
+    #settings-panel button:hover {
+      background: #FF8FB3;
+    }
+
+    #settings-panel button.secondary {
+      background: #555;
+    }
+
+    #settings-panel button.secondary:hover {
+      background: #666;
+    }
+
+    .slider-value {
+      display: inline-block;
+      margin-left: 10px;
+      min-width: 30px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="pet-canvas"></canvas>
+
+  <!-- Settings Panel -->
+  <div id="settings-panel">
+    <h2>Desktop Pet Settings</h2>
+
+    <div class="setting-group">
+      <h3>Work Behaviors</h3>
+      <label>
+        <input type="checkbox" id="pomodoro-enabled">
+        Pomodoro Timer
+      </label>
+      <div style="margin-left: 30px;">
+        <label>
+          Work Duration: <input type="number" id="pomodoro-work" min="1" max="60" style="width: 60px;"> min
+        </label>
+        <label>
+          Break Duration: <input type="number" id="pomodoro-break" min="1" max="30" style="width: 60px;"> min
+        </label>
+      </div>
+
+      <label>
+        <input type="checkbox" id="break-reminder-enabled">
+        Smart Break Reminder
+      </label>
+      <div style="margin-left: 30px;">
+        <label>
+          Activity Threshold: <input type="number" id="break-threshold" min="10" max="120" style="width: 60px;"> min
+        </label>
+      </div>
+
+      <label>
+        <input type="checkbox" id="focus-mode-enabled">
+        Focus Mode Integration
+      </label>
+
+      <label>
+        <input type="checkbox" id="system-health-enabled">
+        System Health Monitor
+      </label>
+
+      <label>
+        <input type="checkbox" id="hydration-enabled">
+        Hydration Reminder
+      </label>
+      <div style="margin-left: 30px;">
+        <label>
+          Interval: <input type="number" id="hydration-interval" min="15" max="180" style="width: 60px;"> min
+        </label>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <h3>Playful Behaviors</h3>
+      <label>
+        <input type="checkbox" id="mouse-thief-enabled">
+        Mouse Thief
+      </label>
+
+      <label>
+        <input type="checkbox" id="celebration-enabled">
+        Celebration Mode
+      </label>
+    </div>
+
+    <div class="setting-group">
+      <h3>Character Settings</h3>
+      <label>
+        Speed: <input type="range" id="character-speed" min="0.5" max="2" step="0.1" value="1">
+        <span class="slider-value" id="speed-value">1.0</span>x
+      </label>
+
+      <label>
+        Size: <input type="range" id="character-size" min="0.5" max="2" step="0.1" value="1">
+        <span class="slider-value" id="size-value">1.0</span>x
+      </label>
+    </div>
+
+    <div class="setting-group">
+      <h3>General</h3>
+      <label>
+        <input type="checkbox" id="disable-mouse-stealing">
+        Disable Mouse Stealing
+      </label>
+
+      <label>
+        <input type="checkbox" id="work-hours-only">
+        Active During Work Hours Only
+      </label>
+      <div style="margin-left: 30px;">
+        <label>
+          Start: <input type="number" id="work-hours-start" min="0" max="23" style="width: 60px;">:00
+        </label>
+        <label>
+          End: <input type="number" id="work-hours-end" min="0" max="23" style="width: 60px;">:00
+        </label>
+      </div>
+    </div>
+
+    <div>
+      <button id="save-settings">Save Settings</button>
+      <button id="close-settings" class="secondary">Close</button>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

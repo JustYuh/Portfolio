@@ -1,0 +1,22 @@
+{
+  "name": "desktop-pet-companion",
+  "version": "1.0.0",
+  "description": "A helpful and playful desktop companion that enhances productivity",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "keywords": ["electron", "desktop-pet", "productivity", "companion"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^28.0.0",
+    "robotjs": "^0.6.0",
+    "node-notifier": "^10.0.1",
+    "systeminformation": "^5.21.20"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.9.1"
+  }
+}
